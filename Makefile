@@ -1,57 +1,43 @@
 .DEFAULT_GOAL := package
 
-# Nom du compilateur
 CC = gcc
-
-# Flags de compilation
 CFLAGS = -Wall -Wextra -std=c11 -I/opt/homebrew/include
-
-# Flags de linkage (ajoutez -lSDL2_image pour SDL2_image)
 LIBS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image
-
-# Répertoires
 SRC_DIR = src
-RES_DIR = ressources
-BIN_DIR = bin
-
-# Liste des sources et des objets (les objets seront placés dans bin/)
-SRC = $(wildcard $(SRC_DIR)/*.c)
-OBJ = $(SRC:$(SRC_DIR)/%.c=$(BIN_DIR)/%.o)
+OBJ_DIR = bin
+SRC = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/views/*.c)
+OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 EXEC = tetris
 
-.PHONY: all package run clean copy_ressources
+.PHONY: all package run clean
 
-# Cible all : compilation de l'exécutable
-all: $(BIN_DIR)/$(EXEC)
+all: $(OBJ_DIR)/$(EXEC)
 
-$(BIN_DIR)/$(EXEC): $(OBJ)
-	@mkdir -p $(BIN_DIR)
+$(OBJ_DIR)/$(EXEC): $(OBJ)
+	@mkdir -p $(OBJ_DIR)
 	$(CC) -o $@ $^ $(LIBS)
 
-$(BIN_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(BIN_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
 	$(CC) -c $< $(CFLAGS) -o $@
 
-# Copie du dossier ressources dans bin/
+$(OBJ_DIR)/%.o: $(SRC_DIR)/views/%.c
+	@mkdir -p $(dir $@)
+	$(CC) -c $< $(CFLAGS) -o $@
+
 copy_ressources:
-	@echo "Copie du dossier ressources..."
-	@mkdir -p $(BIN_DIR)/$(RES_DIR)
-	@if ls $(RES_DIR)/* 1> /dev/null 2>&1; then \
-		cp -R $(RES_DIR)/* $(BIN_DIR)/$(RES_DIR)/; \
+	@mkdir -p $(OBJ_DIR)/ressources
+	@if ls ressources/* 1> /dev/null 2>&1; then \
+		cp -R ressources/* $(OBJ_DIR)/ressources/; \
 	else \
-		echo "Aucun fichier dans $(RES_DIR), rien à copier."; \
+		echo "Aucun fichier dans ressources."; \
 	fi
 
-# Cible run : lance l'exécutable compilé
 run:
-	@echo "Lancement du projet..."
-	$(BIN_DIR)/$(EXEC)
+	$(OBJ_DIR)/$(EXEC)
 
-# Cible package : compile, copie les ressources, puis lance l'exécutable
 package: all copy_ressources
-	@echo "Packaging terminé dans le dossier $(BIN_DIR)"
-	@$(MAKE) run
+	$(MAKE) run
 
-# Nettoyage du dossier bin/
 clean:
-	rm -rf $(BIN_DIR)
+	rm -rf $(OBJ_DIR)
