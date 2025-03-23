@@ -1,4 +1,5 @@
 #include "home.h"
+#include "marathon.h"
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 
@@ -79,9 +80,34 @@ SDL_Rect bgRect = {0, 0, winW, winH};
             else if (event.type == SDL_MOUSEBUTTONDOWN) {
                 int mx = event.button.x;
                 int my = event.button.y;
-                if (mx >= soundRect.x && mx <= soundRect.x + soundRect.w &&
-                    my >= soundRect.y && my <= soundRect.y + soundRect.h)
+              if (mx >= soundRect.x && mx <= soundRect.x + soundRect.w &&
+                    my >= soundRect.y && my <= soundRect.y + soundRect.h) {
                     soundActive = !soundActive;
+            } else if (mx >= marathonRect.x && mx <= marathonRect.x + marathonRect.w &&
+                           my >= marathonRect.y && my <= marathonRect.y + marathonRect.h) {
+                    SDL_DestroyTexture(bgTex);
+                    SDL_DestroyTexture(logoTex);
+                    SDL_DestroyTexture(marathonTex);
+                    SDL_DestroyTexture(classiqueTex);
+                    SDL_DestroyTexture(duelTex);
+                    SDL_DestroyTexture(quitterTex);
+                    SDL_DestroyTexture(soundOnTex);
+                    SDL_DestroyTexture(soundOffTex);
+                    running = 0;
+                    showMarathon(renderer);
+                    return;
+                } else if (mx >= classiqueRect.x && mx <= classiqueRect.x + classiqueRect.w &&
+                           my >= classiqueRect.y && my <= classiqueRect.y + classiqueRect.h) {
+                    running = 0;
+                    // showClassique(renderer);
+                } else if (mx >= duelRect.x && mx <= duelRect.x + duelRect.w &&
+                           my >= duelRect.y && my <= duelRect.y + duelRect.h) {
+                    running = 0;
+                    // showDuel(renderer);
+                } else if (mx >= quitterRect.x && mx <= quitterRect.x + quitterRect.w &&
+                           my >= quitterRect.y && my <= quitterRect.y + quitterRect.h) {
+                    running = 0;
+                }
             }
         }
         SDL_RenderClear(renderer);

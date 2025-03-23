@@ -2,7 +2,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -I/opt/homebrew/include
-LIBS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image
+LIBS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx
 SRC_DIR = src
 OBJ_DIR = bin
 SRC = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/views/*.c)
