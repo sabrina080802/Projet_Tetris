@@ -2,9 +2,7 @@
 #include "../logic/pieces.h"
 #include "gamemode_internal.h"
 
-SDL_Texture* blockTextures[7];
 
-void initPiecesTextures(SDL_Renderer* renderer); 
 
 void showDuel(SDL_Renderer* renderer) {
     GameModeInfo duel = {
@@ -15,8 +13,10 @@ void showDuel(SDL_Renderer* renderer) {
         .nextText = "Prochain adversaire"
     };
 
-    initPiecesTextures(renderer);                      
-    Tetromino current = createTetromino(rand() % 7);   
-
-    showGameMode(renderer, duel, &current, blockTextures); 
+    initPiecesTextures(renderer);                         
+    Tetromino current = createTetromino(rand() % 7);
+    Tetromino next = createTetromino(rand() % 7); 
+    pieceCount[current.type]++;
+    current.y = 5; 
+    showGameMode(renderer, duel, &current, &next, blockTextures);
 }

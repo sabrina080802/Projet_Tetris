@@ -3,7 +3,6 @@
 
 #include <SDL2/SDL.h>
 
-
 void showDuel(SDL_Renderer* renderer);
 
 #endif

@@ -13,6 +13,6 @@ typedef struct {
     const char* nextText;
 } GameModeInfo;
 
-void showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* current, SDL_Texture* blockTextures[]);
+void showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* current, Tetromino* next, SDL_Texture* blockTextures[]);
 
 #endif
