@@ -8,5 +8,7 @@ SDL_Texture* loadTexture(SDL_Renderer* renderer, const char* path);
 SDL_Texture* renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color, int* w, int* h);
 void initPieceBag();
 int getNextPieceType();
+void drawGhostPiece(SDL_Renderer* renderer, Tetromino* t, int grid[GRID_ROWS][GRID_COLS], int blockSize, int offsetX, int offsetY);
+
 
 #endif

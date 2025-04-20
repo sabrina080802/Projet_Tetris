@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 
 SDL_Texture* blockTextures[7];
+SDL_Texture* ghostTexture = NULL;  
 
 SDL_Texture* loadTexture(SDL_Renderer* renderer, const char* path) {
     SDL_Surface* surf = IMG_Load(path);
@@ -23,4 +24,7 @@ void initPiecesTextures(SDL_Renderer* renderer) {
     blockTextures[4] = loadTexture(renderer, PIECE_Z);
     blockTextures[5] = loadTexture(renderer, PIECE_L);
     blockTextures[6] = loadTexture(renderer, PIECE_T);
+    ghostTexture = loadTexture(renderer, GHOST_PIECE); 
+    if (!ghostTexture)   fprintf(stderr, "Erreur chargement ghostTexture !\n");
+   
 }

@@ -42,5 +42,6 @@
 #define PIECE_Z "ressources/Pieces/jaune.png"
 #define PIECE_L "ressources/Pieces/turquoise.png"
 #define PIECE_T "ressources/Pieces/violet.png"
+#define GHOST_PIECE "ressources/Pieces/white.png"
 
 #endif

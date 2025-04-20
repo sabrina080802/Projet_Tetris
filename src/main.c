@@ -10,6 +10,8 @@
 #include "modes/marathon.h"
 #include "modes/duel.h"
 #include "modes/classique.h"
+#include "ui/ressources.h"
+#include "ui/textures.h" 
 
 int main(int argc, char* argv[]) {
     srand(time(NULL));
@@ -18,6 +20,9 @@ int main(int argc, char* argv[]) {
     App app;
     if (!initApp(&app, "Tetris SDL", 1871, 1000, SDL_WINDOW_FULLSCREEN))
         return 1;
+
+    initPiecesTextures(app.renderer);
+    ghostTexture = loadTexture(app.renderer, GHOST_PIECE);  
 
     showSplash(app.renderer);
 
@@ -31,8 +36,6 @@ int main(int argc, char* argv[]) {
             case 3: showDuel(app.renderer); break;
         }
     }
-
-
     cleanupApp(&app);
     return 0;
 }

@@ -191,7 +191,7 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
                         int pts[] = {0, 100, 300, 500, 800}; 
                         score += pts[cleared > 4 ? 4 : cleared];
                         totalLinesCleared += cleared;
-                       snprintf(scoreTextBuffer, sizeof(scoreTextBuffer), "Score\n%06d", score);
+                        snprintf(scoreTextBuffer, sizeof(scoreTextBuffer), "Score\n%06d", score);
                         snprintf(lineTextBuffer, sizeof(lineTextBuffer), "Lignes\n%05d", totalLinesCleared);
 
                         // Update dynamic textures
@@ -226,6 +226,7 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer,bgTex, NULL, &bgRect);
         drawGrid(renderer, blockTextures, blockSize, wellRect.x, wellRect.y); 
+        drawGhostPiece(renderer, current, grid, blockSize, wellRect.x, wellRect.y);
         drawTetromino(renderer, current, blockTextures, blockSize, wellRect.x, wellRect.y);
         drawPieceStats(renderer, blockTextures, blockSize, statsRect.x + 20, statsRect.y + 20, fontSmall);
         int radius = 25;
