@@ -119,34 +119,20 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
     SDL_Event e;
     while (running) {
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) return 0;
-                if (collides(current, grid)) {
-                    int result = showGameOver(renderer, score, totalLinesCleared, (SDL_GetTicks() - startTime) / 1000);
-                    if (result == 1) {
-                        *current = createTetromino(getNextPieceType());
-                        *next = createTetromino(getNextPieceType());
-                        memset(grid, 0, sizeof(grid));
-                        score = 0;
-                        totalLinesCleared = 0;
-                        startTime = SDL_GetTicks();
-                    } else {
-                        running = 0;
-                    }
-                }
-
-            else if (e.type == SDL_MOUSEBUTTONDOWN) {
+            if (e.type == SDL_QUIT) {
+                return 0;
+            } else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 int mx = e.button.x, my = e.button.y;
-                // Toggle musique
                 if (mx >= musicRect.x && mx <= musicRect.x + musicRect.w &&
                     my >= musicRect.y && my <= musicRect.y + musicRect.h) {
                     musicActive = !musicActive;
                 }
-                // Toggle pause
                 else if (mx >= pauseRect.x && mx <= pauseRect.x + pauseRect.w &&
                         my >= pauseRect.y && my <= pauseRect.y + pauseRect.h) {
                     paused = 1;
                 }
             }
+
             if (paused) {
                 int action = showPause(renderer); 
                 if (action == 1) return 1;
@@ -193,8 +179,6 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
                         totalLinesCleared += cleared;
                         snprintf(scoreTextBuffer, sizeof(scoreTextBuffer), "Score\n%06d", score);
                         snprintf(lineTextBuffer, sizeof(lineTextBuffer), "Lignes\n%05d", totalLinesCleared);
-
-                        // Update dynamic textures
                         SDL_DestroyTexture(scoreTex);
                         SDL_DestroyTexture(linesTex);
                         scoreTex = renderText(renderer, fontSmall, scoreTextBuffer, WHITE, &wScore, &hScore);
@@ -211,18 +195,26 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
                         }
                     }
                 }
-                *current = *next;
+               *current = *next;
                 pieceCount[current->type]++;
-                *next = createTetromino(rand() % 7);
-                drawTetromino(renderer, next, blockTextures, blockSize / 2, nextRect.x + 50, nextRect.y + 60);
+                *next = createTetromino(getNextPieceType());  
                 if (collides(current, grid)) {
-                    running = 0; 
+                    int result = showGameOver(renderer, score, totalLinesCleared, (SDL_GetTicks() - startTime) / 1000);
+                    if (result == 1) {
+                        memset(grid, 0, sizeof(grid));
+                        *current = createTetromino(getNextPieceType());
+                        *next = createTetromino(getNextPieceType());
+                        score = 0;
+                        totalLinesCleared = 0;
+                        startTime = SDL_GetTicks();
+                        continue; 
+                    } else {
+                        running = 0; 
+                    }
                 }
             }
             lastFallTime = now;
         }
-
-
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer,bgTex, NULL, &bgRect);
         drawGrid(renderer, blockTextures, blockSize, wellRect.x, wellRect.y); 

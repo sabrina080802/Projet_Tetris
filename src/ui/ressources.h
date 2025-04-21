@@ -4,7 +4,6 @@
 // Backgrounds
 #define BG_INGAME "ressources/ingame-bg.png"
 #define BG_PAUSE "ressources/Pauses/bg_pause.png"
-#define BG_GAMEOVER "ressources/Over/bg_gameover.png"
 #define HOME_BG "ressources/background.png"
 #define HOME_LOGO "ressources/logo.png"
 #define HOME_BTN_MARATHON "ressources/marathon.png"
@@ -20,8 +19,9 @@
 #define QUITTER "ressources/quitter.png"
 
 // Game Over
-#define BTN_RECOMMENCER "ressources/FinDePartie/btn_recommencer.png"
+#define BTN_RECOMMENCER "ressources/FinDePartie/recommencer.png"
 #define BTN_MENU "ressources/FinDePartie/menu.png"
+#define BG_GAMEOVER "ressources/FinDePartie/bg_ends.png"
 
 // Icônes musique
 #define ICON_MUSIC_ON "ressources/bobActif.png"

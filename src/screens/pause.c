@@ -26,8 +26,8 @@ int showPause(SDL_Renderer* renderer) {
     SDL_GetRendererOutputSize(renderer, &winW, &winH);    
     int btnW = 200,  btnH = 70;
     int btnX = (winW - btnW) / 2;
-    int yContinueOffset = 40;  // + descend le bouton Continuer
-    int yQuitOffset     = 10;  // + descend un peu Quitter, si tu veux
+    int yContinueOffset = 40;  
+    int yQuitOffset     = 10;  
 
     SDL_Rect continuerRect = {
         btnX,
