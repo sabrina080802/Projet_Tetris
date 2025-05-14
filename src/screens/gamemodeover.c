@@ -65,13 +65,16 @@ int showGameOver(SDL_Renderer* renderer, int score, int lines, int elapsedSecond
             }
         }
 
-        SDL_RenderCopy(renderer, snapTex, NULL, &fullRect);  
-        SDL_RenderCopy(renderer, bgTex, NULL, &fullRect);   
+        SDL_RenderCopy(renderer, snapTex, NULL, &fullRect);
+        SDL_SetTextureAlphaMod(bgTex, 200);          
+        SDL_RenderCopy(renderer, bgTex, NULL, &fullRect);
+
         SDL_RenderCopy(renderer, btnRetry, NULL, &retryRect);
         SDL_RenderCopy(renderer, btnMenu,  NULL, &menuRect);
         SDL_RenderCopy(renderer, scoreTex, NULL, &scoreRect);
         SDL_RenderCopy(renderer, linesTex, NULL, &linesRect);
         SDL_RenderCopy(renderer, timeTex,  NULL, &timeRect);
+
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }

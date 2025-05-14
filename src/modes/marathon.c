@@ -5,8 +5,6 @@
 #include "../logic/score.h"
 #include "../logic/timer.h"
 
-
-
 int showMarathon(SDL_Renderer* renderer) {
     GameModeInfo marathon = {
         .modeName = "Marathon",

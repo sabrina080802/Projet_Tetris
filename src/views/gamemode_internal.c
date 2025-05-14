@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <time.h>
-
 #include "../logic/grid.h"             
 #include "../logic/pieces.h"           
 #include "../ui/textures.h"            
@@ -36,10 +35,8 @@ int getNextPieceType() {
 
 void drawGhostPiece(SDL_Renderer* renderer, Tetromino* t, int grid[GRID_ROWS][GRID_COLS], int blockSize, int offsetX, int offsetY) {
 
-    if (!ghostTexture) {
-    printf("⚠️ ghostTexture n’est pas chargée !\n");
-}
-
+    if (!ghostTexture) printf("⚠️ ghostTexture n’est pas chargée !\n");
+    
     Tetromino ghost = *t;
     while (!collides(&ghost, grid)) {
         ghost.y++;
@@ -51,7 +48,6 @@ void drawGhostPiece(SDL_Renderer* renderer, Tetromino* t, int grid[GRID_ROWS][GR
             if (ghost.shape[row][col]) {
                 int x = offsetX + (ghost.x + col) * blockSize;
                 int y = offsetY + (ghost.y + row) * blockSize;
-
                 SDL_Rect dest = { x, y, blockSize, blockSize };
                 SDL_RenderCopy(renderer, ghostTexture, NULL, &dest);
             }

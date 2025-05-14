@@ -7,7 +7,6 @@
 #define HOME_BG "ressources/background.png"
 #define HOME_LOGO "ressources/logo.png"
 #define HOME_BTN_MARATHON "ressources/marathon.png"
-#define HOME_BTN_CLASSIQUE "ressources/classique.png"
 #define HOME_BTN_DUEL "ressources/duel.png"
 #define ACCUEIL "ressources/Accueil.png"
 
@@ -26,10 +25,6 @@
 // Icônes musique
 #define ICON_MUSIC_ON "ressources/bobActif.png"
 #define ICON_MUSIC_OFF "ressources/bobInactif.png"
-
-//Text
-
-#define HOME_NEXT "ressources/"
 
 // Font
 #define FONT_PATH "ressources/fonts/Iceland-Regular.ttf"

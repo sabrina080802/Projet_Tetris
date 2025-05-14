@@ -9,11 +9,12 @@
 #include "views/gamemode_internal.h" 
 #include "modes/marathon.h"
 #include "modes/duel.h"
-#include "modes/classique.h"
 #include "ui/ressources.h"
 #include "ui/textures.h" 
 
 int main(int argc, char* argv[]) {
+    (void)argc;
+    (void)argv;
     srand(time(NULL));
     initPieceBag();
 
@@ -28,12 +29,11 @@ int main(int argc, char* argv[]) {
 
     int running = 1;
     while (running) {
-        int mode = showHome(app.renderer);
+       int mode = showHome(app.renderer);
         switch (mode) {
-            case 0: running = 0; break;
-            case 1: showMarathon(app.renderer); break;
-            case 2: showClassique(app.renderer); break;
-            case 3: showDuel(app.renderer); break;
+        case 0: running = 0; break;
+        case 1: showMarathon(app.renderer); break;
+        case 2: showDuel(app.renderer); break;
         }
     }
     cleanupApp(&app);

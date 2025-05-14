@@ -2,7 +2,6 @@
 #include <string.h>
 #include "../logic/grid.h"
 
-
 int pieceCount[7] = {0};
 
 Tetromino createTetromino(int type) {
@@ -63,4 +62,12 @@ void spawnPiece(Tetromino* t) {
     t->y = -1;  
     t->rotation = 0;
         pieceCount[t->type]++;
+}
+
+int getTotalPieces(void) {
+    int total = 0;
+    for (int i = 0; i < 7; i++) {
+        total += pieceCount[i];
+    }
+    return total;
 }

@@ -6,6 +6,8 @@
 #include "../ui/text.h"
 #include "../ui/render.h"   
 #include "../screens/pause.h"
+#include "../logic/score.h" 
+#include "../logic/timer.h" 
 #include "../screens/gamemodeover.h"      
 #include "../views/gamemode_internal.h"
 #include <SDL2/SDL2_gfxPrimitives.h>
@@ -19,19 +21,20 @@ static const SDL_Color WHITE = {255, 255, 255, 255};
 static const SDL_Color VIOLET_FONCE = {37, 17, 66, 127};
 static const SDL_Color VIOLET_BORD = {137, 64, 247, 255};
 
-
 int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* current, Tetromino* next, SDL_Texture* blockTextures[]){
      if (TTF_Init() != 0) return 0;
     TTF_Font* fontBig = loadFont(FONT_PATH, 48);
     TTF_Font* fontSmall = loadFont(FONT_PATH, 28);
     if (!fontBig || !fontSmall) return 0;
 
-    int score = 0;
-    int totalLinesCleared = 0;
-    Uint32 startTime = SDL_GetTicks();
+    resetScore();
+    resetLinesCleared();
+    resetLevel();
+    resetTimer();
+
     char scoreTextBuffer[64];
     char lineTextBuffer[64];
-    char timeTextBuffer[64];
+    Uint32 startTime = SDL_GetTicks();
 
     int winW, winH;
     SDL_GetRendererOutputSize(renderer, &winW, &winH);
@@ -51,21 +54,22 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
     SDL_Texture* btnContinuerTex = loadTexture(renderer, BTN_CONTINUER);
     SDL_Texture* btnQuitterTex = loadTexture(renderer, BTN_QUITTER);
 
-    int wTitle, hTitle, wBest, hBest, wStats, hStats, wScore, hScore, wLines, hLines, wNext, hNext;
+    int wTitle = 0, hTitle = 0;
+    int wBest, hBest, wStats, hStats, wScore, hScore, wLines, hLines, wNext, hNext;
 
-    const char* titleText     = strlen(modeInfo.modeName)     > 0 ? modeInfo.modeName     : " ";
     const char* bestScoreText = strlen(modeInfo.bestScore)    > 0 ? modeInfo.bestScore    : " ";
     const char* statsLabel    = "Statistiques";
     const char* scoreText     = strlen(modeInfo.scoreText)    > 0 ? modeInfo.scoreText    : " ";
     const char* linesText     = strlen(modeInfo.linesText)    > 0 ? modeInfo.linesText    : " ";
     const char* nextLabel = "Suivant";
+    const char* titleText = strlen(modeInfo.modeName) > 0 ? modeInfo.modeName: " ";
 
     SDL_Texture* bestScoreTex = renderText(renderer, fontSmall, bestScoreText, WHITE, &wBest, &hBest);
     SDL_Texture* statsTex     = renderText(renderer, fontSmall, statsLabel,    WHITE, &wStats, &hStats);
     SDL_Texture* scoreTex     = renderText(renderer, fontSmall, scoreText,     WHITE, &wScore, &hScore);
     SDL_Texture* linesTex     = renderText(renderer, fontSmall, linesText,     WHITE, &wLines, &hLines);
     SDL_Texture* nextTex     = renderText(renderer, fontSmall, nextLabel,    WHITE,  &wNext, &hNext);
-
+    SDL_Texture* titleTex = renderText(renderer, fontBig, titleText, WHITE, &wTitle, &hTitle);
     SDL_Rect bgRect = {0, 0, winW, winH};
 
     float gridHeight = winH - 100;
@@ -98,7 +102,6 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
     SDL_Rect linesTextRect = {linesRect.x + 10, linesRect.y + 10 + espace, wLines, hLines};
 
     SDL_Rect nextRect = {scoreRect.x, linesRect.y + linesRect.h + 20, 250, 200};
-    SDL_Rect nextTextRect = {nextRect.x + 10, nextRect.y + 10, wNext, hNext};
 
     int blockSizeW = wellRect.w / GRID_COLS;
     int blockSizeH = wellRect.h / GRID_ROWS;
@@ -174,11 +177,11 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
                 for (int row = 0; row < 4; row++) {
                     int cleared = clearCompleteLines(grid);
                     if (cleared > 0) {
-                        int pts[] = {0, 100, 300, 500, 800}; 
-                        score += pts[cleared > 4 ? 4 : cleared];
-                        totalLinesCleared += cleared;
-                        snprintf(scoreTextBuffer, sizeof(scoreTextBuffer), "Score\n%06d", score);
-                        snprintf(lineTextBuffer, sizeof(lineTextBuffer), "Lignes\n%05d", totalLinesCleared);
+                        addScore(cleared); 
+                        updateTimerFromLevel(level);
+                        fallDelay = getElapsedTime();
+                        snprintf(scoreTextBuffer, sizeof(scoreTextBuffer), "Score\n%06d",   score);
+                        snprintf(lineTextBuffer,  sizeof(lineTextBuffer),"Lignes\n%05d",  linesCleared);
                         SDL_DestroyTexture(scoreTex);
                         SDL_DestroyTexture(linesTex);
                         scoreTex = renderText(renderer, fontSmall, scoreTextBuffer, WHITE, &wScore, &hScore);
@@ -199,13 +202,13 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
                 pieceCount[current->type]++;
                 *next = createTetromino(getNextPieceType());  
                 if (collides(current, grid)) {
-                    int result = showGameOver(renderer, score, totalLinesCleared, (SDL_GetTicks() - startTime) / 1000);
+                    int result = showGameOver(renderer, score, linesCleared, (SDL_GetTicks() - startTime) / 1000);
                     if (result == 1) {
                         memset(grid, 0, sizeof(grid));
                         *current = createTetromino(getNextPieceType());
                         *next = createTetromino(getNextPieceType());
                         score = 0;
-                        totalLinesCleared = 0;
+                        linesCleared = 0;
                         startTime = SDL_GetTicks();
                         continue; 
                     } else {
@@ -224,26 +227,22 @@ int showGameMode(SDL_Renderer* renderer, GameModeInfo modeInfo, Tetromino* curre
         int radius = 25;
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-         char timerText[64];
+        char timerText[64];
         int elapsed = (SDL_GetTicks() - startTime) / 1000;
-        
         snprintf(timerText, sizeof(timerText), "Temps : %02d:%02d", elapsed / 60, elapsed % 60);
 
-        SDL_Texture* modeTex = renderText(renderer, fontBig, modeInfo.modeName, WHITE, NULL, NULL);
         SDL_Texture* timerTex = renderText(renderer, fontBig, timerText, WHITE, NULL, NULL);
-        SDL_Rect modeRect = {50, 30, 0, 0}, timerRect = {0, 30, 0, 0};
-        SDL_QueryTexture(modeTex, NULL, NULL, &modeRect.w, &modeRect.h);
+        SDL_Rect timerRect = {0, 0, 0, 0};          
         SDL_QueryTexture(timerTex, NULL, NULL, &timerRect.w, &timerRect.h);
-        timerRect.x = modeRect.x + modeRect.w + 20;
-        SDL_RenderCopy(renderer, modeTex, NULL, &modeRect);
+        timerRect.y = titleRect.y + (hTitle - timerRect.h) / 2;  
+        timerRect.x = titleRect.x + titleRect.w + 20;        
         SDL_RenderCopy(renderer, timerTex, NULL, &timerRect);
-        SDL_DestroyTexture(modeTex); SDL_DestroyTexture(timerTex);
-
+        SDL_RenderCopy(renderer, titleTex,  NULL, &titleRect);
+        SDL_DestroyTexture(timerTex);
         // Stats
         roundedBoxRGBA(renderer, statsRect.x, statsRect.y, statsRect.x + statsRect.w, statsRect.y + statsRect.h, 20, VIOLET_FONCE.r, VIOLET_FONCE.g, VIOLET_FONCE.b, VIOLET_FONCE.a);
         roundedRectangleRGBA(renderer, statsRect.x, statsRect.y, statsRect.x + statsRect.w, statsRect.y + statsRect.h, 20, VIOLET_BORD.r, VIOLET_BORD.g, VIOLET_BORD.b, VIOLET_BORD.a);
         drawPieceStats(renderer, blockTextures, blockSize, statsRect.x + 20, statsRect.y + 20, fontSmall);
-
         // Next
         roundedBoxRGBA(renderer, nextRect.x, nextRect.y, nextRect.x + nextRect.w, nextRect.y + nextRect.h, 20, VIOLET_FONCE.r, VIOLET_FONCE.g, VIOLET_FONCE.b, VIOLET_FONCE.a);
         roundedRectangleRGBA(renderer, nextRect.x, nextRect.y, nextRect.x + nextRect.w, nextRect.y + nextRect.h, 20, VIOLET_BORD.r, VIOLET_BORD.g, VIOLET_BORD.b, VIOLET_BORD.a);

@@ -7,5 +7,7 @@
 extern int grid[GRID_ROWS][GRID_COLS];
 
 int clearCompleteLines(int grid[GRID_ROWS][GRID_COLS]);
+int getOccupiedBlockCount(void);
+
 
 #endif
