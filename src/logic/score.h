@@ -1,5 +1,4 @@
-#ifndef SCORE_H
-#define SCORE_H
+#pragma once
 
 extern int score;
 extern int level;
@@ -9,5 +8,5 @@ void resetScore(void);
 void resetLevel(void);
 void resetLinesCleared(void);
 void addScore(int n);
-
-#endif
+int getScore(void);
+int getLinesCleared(void);

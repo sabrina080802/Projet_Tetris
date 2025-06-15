@@ -30,3 +30,6 @@ void addScore(int n) {
     linesCleared += n;
     level = (linesCleared / 10) + 1;
 }
+
+int getScore(void)              { return score; }
+int getLinesCleared(void)       { return linesCleared; }

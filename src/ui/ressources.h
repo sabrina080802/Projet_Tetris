@@ -1,5 +1,4 @@
-#ifndef RESSOURCES_H
-#define RESSOURCES_H
+#pragma once
 
 // Backgrounds
 #define BG_INGAME "ressources/ingame-bg.png"
@@ -12,7 +11,7 @@
 
 // Boutons pause
 #define BTN_PAUSE "ressources/Pauses/btn_pause.png"
-#define BG_PAUSE  "ressources/Pauses/bg_pause.png"
+#define BG_PAUSE "ressources/Pauses/bg_pause.png"
 #define BTN_CONTINUER "ressources/Pauses/pause_continuer.png"
 #define BTN_QUITTER "ressources/Pauses/quitter_continuer.png"
 #define QUITTER "ressources/quitter.png"
@@ -30,6 +29,7 @@
 #define FONT_PATH "ressources/fonts/Iceland-Regular.ttf"
 
 // Pièces
+#define PIECE_LIST
 #define PIECE_I "ressources/Pieces/barbie.png"
 #define PIECE_O "ressources/Pieces/bleu.png"
 #define PIECE_J "ressources/Pieces/rose.png"
@@ -38,5 +38,3 @@
 #define PIECE_L "ressources/Pieces/turquoise.png"
 #define PIECE_T "ressources/Pieces/violet.png"
 #define GHOST_PIECE "ressources/Pieces/white.png"
-
-#endif

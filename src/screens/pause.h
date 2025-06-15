@@ -1,9 +1,8 @@
-#ifndef PAUSE_H
-#define PAUSE_H
+#pragma once
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "../ui/ressources.h"
+#include "../ui/textures.h"
 
-int showPause(SDL_Renderer* renderer);
-
-#endif
+int showPause(SDL_Renderer *renderer);
