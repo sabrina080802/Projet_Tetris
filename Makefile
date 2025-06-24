@@ -1,44 +1,52 @@
-.DEFAULT_GOAL := package
-
 # === Variables ===
-CC      = gcc
+CC = gcc
 CFLAGS  = -Wall -Wextra -std=c11 -I/opt/homebrew/include
-LIBS    = -L/opt/homebrew/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx
+LDFLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lSDL2_mixer -mwindows
 
 SRC_DIR = src
-OBJ_DIR = bin
-EXEC    = tetris
+BUILD_DIR = build
+BIN_DIR = bin
+TARGET = $(BIN_DIR)/tetris
 
-# === Détection automatique des sources ===
-SRC     = $(shell find $(SRC_DIR) -name '*.c')
-OBJ     = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
+RES_DIR = ressources
+BIN_RES_DIR = $(BIN_DIR)/ressources
 
-# === Règles ===
-.PHONY: all package run clean copy_ressources
+# === Sources & Objets ===
+SRCS = $(shell find $(SRC_DIR) -name '*.c')
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRCS))
 
-all: $(OBJ_DIR)/$(EXEC)
+# === Cibles principales ===
+.PHONY: default all run clean
 
-$(OBJ_DIR)/$(EXEC): $(OBJ)
+# Cible par défaut
+default: run
+
+# Compilation + ressources
+all: $(TARGET)
+	@echo "Copie des ressources dans $(BIN_RES_DIR)..."
+	@mkdir -p $(BIN_RES_DIR)
+	@cp -r $(RES_DIR)/* $(BIN_RES_DIR)/
+
+# Lancement du jeu
+run: all
+	@echo "Lancement du jeu..."
+	$(TARGET)
+
+# === Compilation ===
+$(TARGET): $(OBJS) | $(BIN_DIR)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	@mkdir -p $(dir $@)
-	$(CC) -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) -c $< -o $@ $(CFLAGS)
+# === Création des dossiers ===
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
-copy_ressources:
-	@mkdir -p $(OBJ_DIR)/ressources
-	@if ls ressources/* 1> /dev/null 2>&1; then \
-		cp -R ressources/* $(OBJ_DIR)/ressources/; \
-	else \
-		echo "Aucun fichier dans ressources."; \
-	fi
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
-run:
-	$(OBJ_DIR)/$(EXEC)
-
-package: all copy_ressources
-	$(MAKE) run
-
+# === Nettoyage ===
 clean:
-	rm -rf $(OBJ_DIR)
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
