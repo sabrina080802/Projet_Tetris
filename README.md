@@ -40,7 +40,7 @@ Le jeu utilise les bibliothèques suivantes :
 
 ---
 
-###  Windows
+### ▶Windows
 
 1. Installer [MSYS2](https://www.msys2.org/) (recommandé).
 
